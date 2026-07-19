@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArnicAI — Employés IA pour commerces et PME, sous votre contrôle</title>
+<meta name="description" content="Une équipe d'employés IA qui répond à vos clients, prépare vos réponses aux avis et vos relances — et ne fait rien partir sans votre validation. Oisans & région grenobloise.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322382B'/%3E%3Ctext x='16' y='21' font-family='Georgia,serif' font-size='17' font-weight='600' fill='%23F4F1EA' text-anchor='middle'%3EA%3C/text%3E%3Crect x='9' y='24' width='14' height='2.5' fill='%23E9A93D'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Archivo:ital,wght@0,300..800;1,300..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FDFBF6; --surface:#F4F1EA; --card:#FDFBF6; --border:#DDD6C8; --hair:#EDE8DC;
+    --ink:#2A2620; --muted:#5C564B; --faint:#8B8578;
+    --primary:#22382B; --primary-hover:#3E5C43; --primary-ink:#F4F1EA;
+    --link:#3E5C43; --link-hover:#C77F1F; --wm-ai:#3E5C43;
+    --green-soft:#E4EEE0; --green-border:#A8C4A2; --green-ink:#22382B;
+    --wait-bg:#F8ECD3; --wait-ink:#7A5510; --danger:#7A3A2A;
+    --band:#22382B; --band-ink:#F4F1EA; --band-muted:#A8C4A2;
+    --arnica:#E9A93D;
+  }
+  html[data-theme="dark"] {
+    --bg:#1B1815; --surface:#24211B; --card:#24211B; --border:#35302A; --hair:#35302A;
+    --ink:#F4F1EA; --muted:#BDB5A6; --faint:#8B8578;
+    --primary:#A8C4A2; --primary-hover:#C2D8BD; --primary-ink:#1B1815;
+    --link:#A8C4A2; --link-hover:#E9A93D; --wm-ai:#A8C4A2;
+    --green-soft:#28331F; --green-border:#3E5C43; --green-ink:#C2D8BD;
+    --wait-bg:#332A17; --wait-ink:#E9A93D; --danger:#D4A08E;
+    --band:#24211B; --band-ink:#F4F1EA; --band-muted:#A8C4A2;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: Archivo, system-ui, sans-serif;
+    transition: background 0.25s, color 0.25s;
+  }
+  .serif { font-family: Spectral, Georgia, serif; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; letter-spacing: 0.05em; }
+  a { color: var(--link); }
+  a:hover { color: var(--link-hover); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
+
+  h1, h2 { font-family: Spectral, Georgia, serif; font-weight: 500; margin: 0; text-wrap: pretty; }
+  h1 { font-size: clamp(32px, 5.5vw, 54px); line-height: 1.15; }
+  h2 { font-size: clamp(26px, 4vw, 34px); line-height: 1.2; }
+
+  .btn-primary, .btn-outline, .btn-text {
+    font-family: Archivo, system-ui, sans-serif; font-weight: 600; font-size: 15px;
+    border-radius: 6px; text-decoration: none; cursor: pointer; display: inline-block;
+  }
+  .btn-primary { color: var(--primary-ink); background: var(--primary); border: none; padding: 13px 22px; }
+  .btn-primary:hover { background: var(--primary-hover); color: var(--primary-ink); }
+  .btn-outline { color: var(--ink); background: transparent; border: 1.5px solid var(--ink); padding: 11.5px 22px; }
+  .btn-outline:hover { background: var(--hair); color: var(--ink); }
+  .btn-text { color: var(--danger); background: transparent; border: none; padding: 11px 10px; }
+  .btn-text:hover { text-decoration: underline; }
+
+  /* Navigation */
+  .nav { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .nav .wrap { padding-top: 14px; padding-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .wordmark { font-family: Spectral, Georgia, serif; font-size: 24px; color: var(--ink); }
+  .wordmark b { font-weight: 600; color: var(--wm-ai); border-bottom: 3px solid var(--arnica); display: inline-block; line-height: 1; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .theme-toggle {
+    font-family: Archivo, system-ui, sans-serif; font-size: 13px; font-weight: 600; color: var(--muted);
+    background: transparent; border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--faint); }
+  .nav-cta { font-size: 14px; padding: 9px 16px; }
+
+  /* Héro */
+  .hero { border-bottom: 1px solid var(--border); background: var(--surface); }
+  .hero .wrap { padding-top: clamp(48px, 8vw, 88px); padding-bottom: clamp(48px, 7vw, 80px); display: flex; flex-direction: column; gap: 40px; }
+  .hero-text { display: flex; flex-direction: column; gap: 18px; max-width: 720px; }
+  .hero-text p { margin: 0; font-size: clamp(16px, 2.2vw, 18px); line-height: 1.6; color: var(--muted); max-width: 560px; text-wrap: pretty; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+
+  /* Carte de validation */
+  .approval { max-width: 640px; width: 100%; align-self: center; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .approval-head { background: var(--wait-bg); border-bottom: 1px solid var(--arnica); padding: 12px 22px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .approval-status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--wait-ink); }
+  .approval-status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--arnica); }
+  .approval-meta { font-size: 11px; color: var(--wait-ink); }
+  .approval-block { padding: 20px 22px 8px; display: flex; flex-direction: column; gap: 6px; }
+  .approval-block + .approval-block { padding: 14px 22px 20px; }
+  .approval-label { font-size: 11px; color: var(--faint); }
+  .approval-msg { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+  .approval-draft { margin: 0; font-family: Spectral, Georgia, serif; font-size: 16.5px; line-height: 1.55; color: var(--ink); }
+  .approval-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 22px 20px; border-top: 1px solid var(--hair); }
+  .approval-actions .btn-primary { font-size: 14px; padding: 11px 20px; }
+  .approval-actions .btn-outline { font-size: 14px; padding: 9.5px 20px; }
+  .approval-actions .btn-text { font-size: 14px; }
+
+  /* Sélecteur d'audience */
+  .choose { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .choose a { text-decoration: none; color: var(--ink); }
+  .choose .card { padding: 26px 28px; gap: 10px; border-width: 1.5px; transition: border-color 0.15s; height: 100%; }
+  .choose .card:hover { border-color: var(--primary); }
+  .choose .who { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--link); }
+  .choose .title { font-family: Spectral, Georgia, serif; font-size: 22px; font-weight: 500; line-height: 1.25; }
+  .choose .go { font-weight: 600; font-size: 14px; color: var(--link); margin-top: 4px; }
+
+  /* Sections */
+  section.alt { background: var(--surface); }
+  section { border-bottom: 1px solid var(--border); }
+  section .wrap { padding-top: clamp(48px, 7vw, 72px); padding-bottom: clamp(48px, 7vw, 72px); display: flex; flex-direction: column; gap: 28px; }
+  .section-intro { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+  .section-intro p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--muted); text-wrap: pretty; }
+
+  .grid { display: grid; gap: 16px; }
+  .grid-team { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .grid-steps { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .grid-rules { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-pillars { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .grid-offers { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--band); color: var(--band-ink); display: inline-flex; align-items: center; justify-content: center; font-family: Spectral, Georgia, serif; font-size: 20px; font-weight: 600; }
+  .member-name { font-size: 17px; font-weight: 600; }
+  .member-role { font-size: 11px; color: var(--link); }
+  .member-id { display: flex; flex-direction: column; gap: 3px; }
+  .card p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
+
+  .step-num { font-family: Spectral, Georgia, serif; font-size: 30px; font-weight: 600; color: var(--link); }
+  .step-title { font-size: 17px; font-weight: 600; }
+  .card.step { padding: 24px; gap: 10px; }
+  .card.step p { font-size: 14.5px; }
+
+  .rules-can { background: var(--green-soft); border-color: var(--green-border); padding: 24px; gap: 14px; }
+  .rules-cant { padding: 24px; gap: 14px; }
+  .rules-label-can { font-size: 12px; letter-spacing: 0.08em; color: var(--green-ink); }
+  .rules-label-cant { font-size: 12px; letter-spacing: 0.08em; color: var(--danger); }
+  .card ul { margin: 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.5; color: var(--ink); }
+
+  .pillar { border-top: 3px solid var(--arnica); padding: 14px 4px 0; display: flex; flex-direction: column; gap: 6px; }
+  .pillar b { font-size: 15px; font-weight: 600; }
+  .pillar p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
+
+  .card.offer { padding: 28px; gap: 14px; }
+  .offer-tag { font-size: 12px; letter-spacing: 0.08em; color: var(--link); }
+  .offer-title { font-family: Spectral, Georgia, serif; font-size: 24px; font-weight: 500; line-height: 1.25; }
+  .card.offer p { font-size: 15px; line-height: 1.6; }
+  .offer-note { font-size: 14px; color: var(--faint); border-top: 1px solid var(--hair); padding-top: 12px; }
+
+  /* Appel final */
+  .cta-band { background: var(--band); border-bottom: none; }
+  .cta-band .wrap { padding-top: clamp(56px, 8vw, 88px); padding-bottom: clamp(56px, 8vw, 88px); gap: 24px; align-items: flex-start; }
+  .cta-band h2 { font-size: clamp(28px, 4.5vw, 40px); color: var(--band-ink); max-width: 640px; }
+  .cta-band p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--band-muted); max-width: 560px; }
+  .btn-arnica {
+    font-family: Archivo, system-ui, sans-serif; font-size: 16px; font-weight: 600;
+    color: #22382B; background: var(--arnica); border-radius: 6px; padding: 14px 26px; text-decoration: none; display: inline-block;
+  }
+  .btn-arnica:hover { background: #F0BC5E; color: #22382B; }
+  .signature { border-top: 1px solid rgba(244, 241, 234, 0.2); padding-top: 20px; margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .signature b { font-size: 15px; font-weight: 600; color: var(--band-ink); }
+  .signature span { font-size: 14px; line-height: 1.5; color: var(--band-muted); }
+
+  footer { background: var(--bg); border-top: 1px solid var(--border); }
+  footer .wrap { padding-top: 28px; padding-bottom: 28px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; }
+  footer .legal { font-size: 13px; line-height: 1.5; color: var(--faint); }
+  footer .links { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  footer .links a { font-size: 13px; }
+  footer .domains { font-size: 12px; color: var(--faint); }
+  #mentions-legales { background: var(--bg); border-top: 1px solid var(--border); }
+  #mentions-legales .wrap { padding-top: 26px; padding-bottom: 26px; }
+  #mentions-legales h2 { font-size: 15px; margin-bottom: 10px; }
+  #mentions-legales p { font-size: 13px; line-height: 1.6; color: var(--faint); margin-bottom: 8px; max-width: none; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="wordmark">Arnic<b>AI</b></div>
+    <div class="nav-right">
+      <a href="#equipe" class="nav-link" style="font-size:14px; font-weight:600; text-decoration:none;">Commerces</a>
+      <a href="#pme" class="nav-link" style="font-size:14px; font-weight:600; text-decoration:none;">PME &amp; ETI</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Changer de thème">Sombre</button>
+      <a class="btn-primary nav-cta" href="#demo">Réserver une démo</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-text">
+      <h1>Un employé de plus. Que vous ne pouvez pas embaucher — mais que vous pouvez installer.</h1>
+      <p>Il répond à vos clients étrangers à 22&nbsp;h, prépare vos réponses aux avis Google et vos relances — et ne fait rien partir sans votre validation.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="#demo">Réserver une démonstration — 30 min, gratuite</a>
+        <a class="btn-outline" href="#equipe">Rencontrer l'équipe</a>
+      </div>
+    </div>
+    <div class="approval">
+      <div class="approval-head">
+        <span class="approval-status">En attente de votre validation</span>
+        <span class="approval-meta mono">ÉLISE · RÉSERVATION · ANGLAIS</span>
+      </div>
+      <div class="approval-block">
+        <span class="approval-label mono">MESSAGE REÇU · HIER 22:04</span>
+        <p class="approval-msg">“Hi! Do you have a table for 4 tomorrow around 7:30pm? One of us is vegetarian. Thanks — Emma”</p>
+      </div>
+      <div class="approval-block">
+        <span class="approval-label mono">RÉPONSE PRÉPARÉE PAR ÉLISE</span>
+        <p class="approval-draft">“Good evening Emma — yes, we have a table for 4 tomorrow at 7:30pm. We'll be glad to prepare a vegetarian option. See you tomorrow!”</p>
+      </div>
+      <div class="approval-actions">
+        <button class="btn-primary" type="button">Valider et envoyer</button>
+        <button class="btn-outline" type="button">Modifier</button>
+        <button class="btn-text" type="button">Rejeter</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vous-etes" class="alt">
+  <div class="wrap">
+    <div class="section-intro">
+      <h2>Vous êtes…</h2>
+    </div>
+    <div class="choose">
+      <a href="#equipe">
+        <div class="card">
+          <span class="who">COMMERCES</span>
+          <span class="title">Gérant d'un hôtel, restaurant, gîte ou commerce</span>
+          <p>Une équipe d'employés IA qui répond à vos clients, vos avis et vos relances — sous votre validation.</p>
+          <span class="go">Découvrir l'équipe →</span>
+        </div>
+      </a>
+      <a href="#pme">
+        <div class="card">
+          <span class="who">PME &amp; ETI</span>
+          <span class="title">Dirigeant d'une PME ou d'une ETI</span>
+          <p>Vos processus repensés avec des agents IA mesurés, gouvernés, intégrés à vos outils.</p>
+          <span class="go">Voir l'approche →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="equipe">
+  <div class="wrap">
+    <div class="section-intro">
+      <h2>Une équipe, pas un logiciel de plus</h2>
+      <p>Chaque employé IA a un rôle précis. Tous préparent, aucun n'envoie : la décision reste chez vous.</p>
+    </div>
+    <div class="grid grid-team">
+      <div class="card">
+        <span class="avatar">É</span>
+        <div class="member-id"><span class="member-name">Élise</span><span class="member-role mono">ACCUEIL &amp; RÉSERVATIONS MULTILINGUE</span></div>
+        <p>Répond aux demandes et réservations de vos clients, dans leur langue, avec vos informations à jour.</p>
+      </div>
+      <div class="card">
+        <span class="avatar">M</span>
+        <div class="member-id"><span class="member-name">Marc</span><span class="member-role mono">AVIS &amp; RÉPUTATION</span></div>
+        <p>Prépare une réponse à chaque avis Google, dans votre ton, sans en laisser passer un seul.</p>
+      </div>
+      <div class="card">
+        <span class="avatar">A</span>
+        <div class="member-id"><span class="member-name">Agathe</span><span class="member-role mono">CONTENU &amp; RÉSEAUX</span></div>
+        <p>Rédige vos publications, menus du jour et actualités saisonnières, prêts à relire.</p>
+      </div>
+      <div class="card">
+        <span class="avatar">S</span>
+        <div class="member-id"><span class="member-name">Simon</span><span class="member-role mono">ADMIN &amp; RELANCES</span></div>
+        <p>Prépare vos relances de devis, factures impayées et confirmations, au bon moment.</p>
+      </div>
+      <div class="card">
+        <span class="avatar">G</span>
+        <div class="member-id"><span class="member-name">Gaspard</span><span class="member-role mono">CHEF D'ÉQUIPE</span></div>
+        <p>Coordonne les autres, vous présente ce qui attend votre validation et le rapport mensuel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Comment ça se passe</h2>
+    <div class="grid grid-steps">
+      <div class="card step">
+        <span class="step-num">1</span>
+        <span class="step-title">Démonstration chez vous</span>
+        <p>30 minutes, gratuite, sur place. Préparée avec vos vrais avis Google — pas une présentation générique.</p>
+      </div>
+      <div class="card step">
+        <span class="step-num">2</span>
+        <span class="step-title">Pilote de 4 semaines</span>
+        <p>Périmètre fixe, convenu ensemble. Vous jugez sur pièces : ce qui a été préparé, ce que vous avez validé.</p>
+      </div>
+      <div class="card step">
+        <span class="step-num">3</span>
+        <span class="step-title">Abonnement mensuel, résiliable</span>
+        <p>Supervision continue, corrections sous 24 h, rapport mensuel. Vous arrêtez quand vous voulez.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-intro">
+      <h2>Des garde-fous, pas des promesses</h2>
+      <p>Le cadre est écrit noir sur blanc, et tenu par la technique — pas par la bonne volonté.</p>
+    </div>
+    <div class="grid grid-rules">
+      <div class="card rules-can">
+        <span class="rules-label-can mono">LES AGENTS PEUVENT</span>
+        <ul>
+          <li>Préparer des réponses dans votre ton, à partir de vos informations</li>
+          <li>Répondre en plusieurs langues aux questions factuelles : horaires, disponibilités, accès</li>
+          <li>Rédiger brouillons d'avis, de relances et de publications</li>
+          <li>Vous alerter quand quelque chose demande votre attention</li>
+        </ul>
+      </div>
+      <div class="card rules-cant">
+        <span class="rules-label-cant mono">LES AGENTS NE PEUVENT PAS</span>
+        <ul>
+          <li>Envoyer ou publier quoi que ce soit sans votre validation</li>
+          <li>Prendre un paiement ou un engagement en votre nom</li>
+          <li>Inventer une information absente de vos documents</li>
+          <li>Modifier vos prix, votre planning ou vos conditions</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid grid-pillars">
+      <div class="pillar">
+        <b>Journal d'audit</b>
+        <p>Chaque action est tracée : qui a préparé quoi, qui a validé, quand.</p>
+      </div>
+      <div class="pillar">
+        <b>Bouton d'arrêt</b>
+        <p>Vous suspendez un agent, ou toute l'équipe, en un geste. Immédiat.</p>
+      </div>
+      <div class="pillar">
+        <b>RGPD</b>
+        <p>Données de vos clients traitées en conformité, hébergement en Europe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pme" class="alt">
+  <div class="wrap">
+    <div class="section-intro">
+      <h2>PME &amp; ETI — Automatisation de workflows</h2>
+      <p>Pour les entreprises dès 1&nbsp;M€ de chiffre d'affaires, dont les équipes perdent leurs journées dans des processus répétitifs.</p>
+    </div>
+    <div class="grid grid-steps">
+      <div class="card step">
+        <span class="step-title">Ce qu'on automatise</span>
+        <p>Demandes clients qui s'empilent, traitement de documents (devis, dossiers, factures), production de contenu et de reporting. Un à trois processus, pas une transformation générale.</p>
+      </div>
+      <div class="card step">
+        <span class="step-title">Comment</span>
+        <p>Cadrage du processus avec vos équipes → reconception avec agents IA, validation humaine intégrée → mesure avant/après sur des critères convenus. Forfait cadré, pas de régie.</p>
+      </div>
+      <div class="card step">
+        <span class="step-title">Gouvernance comprise</span>
+        <p>Mêmes garde-fous que pour les commerces : validation, journal d'audit, limites écrites, données en Europe. Un dispositif que votre DSI peut auditer.</p>
+      </div>
+    </div>
+    <p style="font-size:14px; color:var(--faint); margin:0;">Selon votre profil, le cadrage peut être éligible au diagnostic Data IA de Bpifrance.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="mailto:contact@arnicai.fr?subject=PME%20%E2%80%94%20%C3%A9change%2030%20min">Échanger 30 minutes</a>
+    </div>
+  </div>
+</section>
+
+<section id="demo" class="cta-band">
+  <div class="wrap">
+    <h2>Une démonstration de 30 minutes, chez vous, préparée avec vos vrais avis Google.</h2>
+    <p>Vous repartez avec une idée précise de ce que l'équipe ferait pour votre établissement — et de ce qu'elle ne fera jamais sans vous.</p>
+    <a class="btn-arnica" href="mailto:contact@arnicai.fr">Réserver une démonstration</a>
+    <div class="signature">
+      <b>Frédéric Brédard</b>
+      <span>9 ans d'architecture logicielle, spécialisé agents IA et gouvernance. Basé à Vaujany, Isère.</span>
+    </div>
+  </div>
+</section>
+
+<section id="mentions-legales">
+  <div class="wrap">
+    <h2>Mentions légales</h2>
+    <p><b>Éditeur</b> — ArnicAI est une marque en cours de dépôt (INPI), éditée par
+    Bredard Consulting, SASU au capital de 500 €, immatriculée au RCS de
+    Grenoble sous le n° 851 498 105 — Siège social : 12 route de la Condamine,
+    38114 Vaujany, France — TVA intracommunautaire : FR06 851 498 105.
+    Directeur de la publication : Frédéric Brédard.
+    Contact : <a href="mailto:contact@arnicai.fr">contact@arnicai.fr</a>.</p>
+    <p><b>Hébergement</b> — OVH SAS, 2 rue Kellermann, 59100 Roubaix, France —
+    <a href="https://www.ovhcloud.com" rel="noopener">ovhcloud.com</a>.
+    Données hébergées en France (datacentre de Gravelines).</p>
+    <p><b>Données personnelles</b> — Ce site ne dépose aucun cookie de suivi,
+    n'utilise aucun outil de mesure d'audience et ne collecte aucune donnée
+    personnelle. Le seul stockage local utilisé est votre préférence de thème
+    (clair/sombre), conservée dans votre navigateur. Pour toute question :
+    <a href="mailto:contact@arnicai.fr">contact@arnicai.fr</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="legal">© 2026 Bredard Consulting (SASU) — ArnicAI, marque en cours de dépôt (INPI)</span>
+    <div class="links">
+      <a href="#mentions-legales">Mentions légales</a>
+      <span class="domains mono">arnicai.fr · arnicai.com</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var toggle = document.getElementById("theme-toggle");
+    function apply(theme, persist) {
+      document.documentElement.dataset.theme = theme;
+      toggle.textContent = theme === "light" ? "Sombre" : "Clair";
+      if (persist) { try { localStorage.setItem("arnicai-theme", theme); } catch (e) {} }
+    }
+    var saved = null;
+    try { saved = localStorage.getItem("arnicai-theme"); } catch (e) {}
+    var initial = saved === "dark" || saved === "light"
+      ? saved
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    apply(initial, false);
+    toggle.addEventListener("click", function () {
+      apply(document.documentElement.dataset.theme === "light" ? "dark" : "light", true);
+    });
+  })();
+</script>
+</body>
+</html>

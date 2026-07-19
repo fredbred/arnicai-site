@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Force HTTPS + canonical host: everything -> https://arnicai.fr
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^arnicai\.fr$ [NC]
+RewriteRule ^ https://arnicai.fr%{REQUEST_URI} [L,R=301]
