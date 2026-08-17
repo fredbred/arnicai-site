@@ -4,3 +4,6 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} !^arnicai\.fr$ [NC]
 RewriteRule ^ https://arnicai.fr%{REQUEST_URI} [L,R=301]
+
+# Pretty URL: /confiance -> confiance.html (internal rewrite, after canonical)
+RewriteRule ^confiance/?$ confiance.html [L]
