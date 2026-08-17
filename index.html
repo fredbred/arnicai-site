@@ -88,6 +88,8 @@
   .approval-label { font-size: 11px; color: var(--faint); }
   .approval-msg { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--muted); }
   .approval-draft { margin: 0; font-family: Spectral, Georgia, serif; font-size: 16.5px; line-height: 1.55; color: var(--ink); }
+  .approval-field { border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; background: var(--bg); }
+  .approval-internal { display: block; font-size: 10.5px; color: var(--faint); margin-top: 8px; }
   .approval-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 22px 20px; border-top: 1px solid var(--hair); }
   .approval-actions .btn-primary { font-size: 14px; padding: 11px 20px; }
   .approval-actions .btn-outline { font-size: 14px; padding: 9.5px 20px; }
@@ -212,16 +214,16 @@
         <span class="approval-meta mono">ÉLISE · RÉSERVATION · ANGLAIS</span>
       </div>
       <div class="approval-block">
-        <span class="approval-label mono">MESSAGE REÇU · HIER 22:04</span>
+        <span class="approval-label mono">LE CLIENT A ÉCRIT · HIER 22:04</span>
         <p class="approval-msg">“Hi! Do you have a table for 4 tomorrow around 7:30pm? One of us is vegetarian. Thanks — Emma”</p>
       </div>
       <div class="approval-block">
-        <span class="approval-label mono">RÉPONSE PRÉPARÉE PAR ÉLISE</span>
-        <p class="approval-draft">“Good evening Emma — yes, we have a table for 4 tomorrow at 7:30pm. We'll be glad to prepare a vegetarian option. See you tomorrow!”</p>
+        <span class="approval-label mono">RÉPONSE QUE LE CLIENT RECEVRA — MODIFIABLE AVANT ENVOI</span>
+        <p class="approval-draft approval-field">“Good evening Emma — yes, we have a table for 4 tomorrow at 7:30pm. We'll be glad to prepare a vegetarian option. See you tomorrow!”</p>
+        <span class="approval-internal mono">FICHE INTERNE (ÉLISE) · réservation table de 4 · demain 19 h 30 · option végétarienne</span>
       </div>
       <div class="approval-actions">
         <button class="btn-primary" type="button">Valider et envoyer</button>
-        <button class="btn-outline" type="button">Modifier</button>
         <button class="btn-text" type="button">Rejeter</button>
       </div>
     </div>
@@ -378,10 +380,10 @@
       <p>Et chaque action vit sous une règle : préparée, validée par vous,
       exécutée — ou bloquée. Le journal en garde la trace :</p>
       <div class="trace mono">
-        <div>14:02 · élise · brouillon créé <span class="tag">en attente de validation</span></div>
-        <div>14:07 · vous · validation accordée <span class="tag">validation accordée</span></div>
+        <div>14:02 · marc · brouillon créé — réponse à l'avis de Sarah <span class="tag">en attente de validation</span></div>
+        <div>14:07 · marc · approuvé par le propriétaire <span class="tag">validation accordée</span></div>
         <div>14:07 · marc · réponse publiée sur la fiche Google <span class="tag">action exécutée</span></div>
-        <div>17:30 · vous · bouton d'arrêt actionné</div>
+        <div>17:30 · système · agents mis en pause</div>
         <div>17:31 · élise · message reçu, agents en pause <span class="tag-block">bloqué par la pause</span></div>
       </div>
       <p class="proof-note">Extraits d'une instance de démonstration (données

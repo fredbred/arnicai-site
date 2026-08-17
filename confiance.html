@@ -153,6 +153,14 @@
   .approval-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 18px 16px; border-top: 1px solid var(--hair); }
   .approval-actions .btn-primary { font-size: 14px; padding: 11px 20px; }
   .approval-actions .btn-text { font-size: 14px; }
+  .approval-edit {
+    width: 100%; font-family: Spectral, Georgia, serif; font-size: 15.5px; line-height: 1.55;
+    color: var(--ink); background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 12px; resize: vertical; min-height: 84px;
+  }
+  .approval-edit:focus-visible { outline: 2px solid var(--arnica); outline-offset: 1px; }
+  .approval-edit[readonly] { color: var(--muted); resize: none; }
+  .approval-internal { display: block; font-size: 10.5px; color: var(--faint); margin-top: 8px; }
   .gate-note { font-size: 13px; color: var(--faint); line-height: 1.55; max-width: 480px; margin: 0; }
   .log-panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
   .log-head { padding: 12px 16px; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -306,12 +314,13 @@
             <span class="approval-meta mono">ÉLISE · RÉSERVATION · ANGLAIS</span>
           </div>
           <div class="approval-block">
-            <span class="approval-label mono">MESSAGE REÇU · 22:04</span>
+            <span class="approval-label mono">LE CLIENT A ÉCRIT · 22:04</span>
             <p class="approval-msg">“Hi! Do you have a table for 4 tomorrow around 7:30pm? One of us is vegetarian. Thanks — Emma”</p>
           </div>
           <div class="approval-block">
-            <span class="approval-label mono">RÉPONSE PRÉPARÉE PAR ÉLISE</span>
-            <p class="approval-draft">“Good evening Emma — yes, we have a table for 4 tomorrow at 7:30pm. We'll be glad to prepare a vegetarian option. See you tomorrow!”</p>
+            <label class="approval-label mono" for="g-reply">RÉPONSE QUE LE CLIENT RECEVRA — MODIFIABLE</label>
+            <textarea class="approval-edit" id="g-reply" rows="3" spellcheck="false">Good evening Emma — yes, we have a table for 4 tomorrow at 7:30pm. We'll be glad to prepare a vegetarian option. See you tomorrow!</textarea>
+            <span class="approval-internal mono">FICHE INTERNE (ÉLISE) · réservation table de 4 · demain 19 h 30 · option végétarienne</span>
           </div>
           <div class="approval-actions" id="g-card-actions">
             <button class="btn-primary" id="g-approve" type="button">Valider et envoyer</button>
@@ -659,6 +668,8 @@
     var gReplay = document.getElementById("g-replay");
     var gPunchline = document.getElementById("g-punchline");
     var gLog = document.getElementById("g-log");
+    var gReply = document.getElementById("g-reply");
+    var ORIGINAL_REPLY = gReply.value;
 
     function logLine(time, actor, action, tag, blocked) {
       var empty = gLog.querySelector(".empty");
@@ -676,6 +687,8 @@
       gCardHead.className = "approval-head";
       gCardStatus.textContent = "En attente de votre validation";
       gCardActions.hidden = false;
+      gReply.value = ORIGINAL_REPLY;
+      gReply.readOnly = false;
       gNote.hidden = true;
       gArrive.hidden = false;
       gPause.hidden = true;
@@ -687,16 +700,24 @@
     gArrive.addEventListener("click", function () {
       gArrive.hidden = true;
       gCard.hidden = false;
-      logLine("22:04", "élise", "brouillon créé — réponse à Emma", "en attente de validation", false);
+      logLine("22:04", "élise", "message client reçu", null, false);
+      logLine("22:04", "élise", "réponse préparée, retenue jusqu'à validation", "en attente de validation", false);
     });
 
     gApprove.addEventListener("click", function () {
+      var edited = gReply.value.trim() !== ORIGINAL_REPLY.trim();
       gCardHead.className = "approval-head head-ok";
-      gCardStatus.textContent = "Validée — envoyée";
+      gCardStatus.textContent = edited ? "Validée — votre version envoyée" : "Validée — envoyée";
       gCardActions.hidden = true;
-      logLine("22:07", "vous", "validation accordée", "validation accordée", false);
-      logLine("22:07", "élise", "réponse envoyée à Emma", "action exécutée", false);
-      gNote.textContent = "La réponse est partie parce que vous l'avez validée — et le journal garde les deux étapes.";
+      gReply.readOnly = true;
+      if (edited) {
+        logLine("22:07", "élise", "réponse au client ajustée par le propriétaire", null, false);
+      }
+      logLine("22:07", "élise", "approuvé par le propriétaire", "validation accordée", false);
+      logLine("22:07", "élise", "réponse transmise au client", "action exécutée", false);
+      gNote.textContent = edited
+        ? "C'est votre version ajustée qui est partie — l'édition et la validation sont toutes deux journalisées."
+        : "La réponse est partie parce que vous l'avez validée — et le journal garde chaque étape.";
       gNote.hidden = false;
       gPause.hidden = false;
     });
@@ -705,15 +726,17 @@
       gCardHead.className = "approval-head head-ko";
       gCardStatus.textContent = "Rejetée — rien n'est parti";
       gCardActions.hidden = true;
-      logLine("22:07", "vous", "validation refusée", "validation refusée", true);
-      gNote.textContent = "Rien n'est parti : le brouillon est archivé, le refus est journalisé.";
+      gReply.readOnly = true;
+      logLine("22:07", "élise", "rejeté par le propriétaire", "validation refusée", true);
+      logLine("22:07", "élise", "réponse retenue, relais au propriétaire", "validation refusée", true);
+      gNote.textContent = "Le brouillon est écarté : le client reçoit une réponse d'attente neutre, et vous reprenez la main.";
       gNote.hidden = false;
       gPause.hidden = false;
     });
 
     gPause.addEventListener("click", function () {
       gPause.hidden = true;
-      logLine("22:30", "vous", "bouton d'arrêt actionné — équipe en pause", null, false);
+      logLine("22:30", "système", "agents mis en pause", null, false);
       gMsg2.hidden = false;
     });
 
